@@ -1,39 +1,14 @@
-require 'rubygems'
-require 'serialport'
-require 'eventmachine'
+require 'pry'
+require_relative 'extensions'
+require_relative 'package_controller'
+require_relative 'data_controller'
 
-# sp = SerialPort.new "/dev/pts/8", 9600
+# text = "Lorem ipsum dolor sit amet, consectetur adipiscing elit"
+text = "Lorem ipsum elit"
 
-# if ARGV.size < 4
-#   STDERR.print <<EOF
-#   Usage: ruby #{$0} num_port bps nbits stopb
-# EOF
-#   exit(1)
-# end
-#
+pkg_controller =  PackageController.new(text)
+pkg_controller.info
+packages = pkg_controller.packages
 
-sp = SerialPort.new("/dev/pts/6", 9600, 8, 1, SerialPort::NONE)
-
-while (l = gets) do
-  sp.write(l.sub("\n", "\r"))
-end
-
-# sp.close
-
-
-# p = open('/dev/pts/7', 'r+')
-# p.sync = true
-
-# EM.run do
-  # EM.add_timer(1) do
-    # while( a =  p.gets)
-      # puts a
-    # end
-  # end
-# end
-
-#
-#  EM.add_timer(1) do
-#   puts sp.read
-#  end
-# end
+data_controller = DataController.new(packages)
+text = data_controller.data
