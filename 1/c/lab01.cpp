@@ -1,10 +1,12 @@
 #include "lab01.h"
 
 int main(int argc, char** argv) {
-  if (argc < 2) usage(argv[0]);
+  if (argc < 3) usage(argv[0]);
   int fd = 0;
   string name = "/dev/pts/ ";
   name[9] = argv[1][0];
+
+  string type = argv[2];
   cout << "Port name: " << name << endl;
 
   fd = open(name.c_str(), O_RDWR | O_NOCTTY);
@@ -19,16 +21,17 @@ int main(int argc, char** argv) {
 
   /* start reader thread */
   pthread_t thread;
-  pthread_create(&thread, 0, reader_thread, (void*) &fd);
-
-  /* read from stdin and send it to the serial port */
-  string c;
-  while (true) {
-    cin >> c;
-    write(fd, c.c_str(), c.size());
-    write(fd, "\n", 1);
+  if (type == "reader") {
+    pthread_create(&thread, 0, reader_thread, (void*) &fd);
+    while(true){}
+  } else if (type == "writer") {
+    string c;
+    while (true) {
+      cin >> c;
+      write(fd, c.c_str(), c.size());
+      write(fd, "\n", 1);
+    }
   }
-
   close(fd);
   return 0;
 }
@@ -65,7 +68,7 @@ void* reader_thread(void* pointer) {
 }
 
 void usage(char* cmd) {
-  cerr << "usage: " << cmd << " <Port number>" << endl;
+  cerr << "usage: " << cmd << "<Port number> writer|reader" << endl;
   exit(1);
 }
 
