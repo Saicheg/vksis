@@ -1,65 +1,33 @@
-require 'rubygems'
-require 'serialport'
-require 'eventmachine'
-require 'pry'
+require 'extensions'
+require 'package_controller'
+require 'data_controller'
 
-Shoes.app :height => 480, :width => 640, :resizable => false, :title => 'Serial port chat' do
+Shoes.app :height => 600, :width => 800, :resizable => false, :title => 'Packages encoding' do
   background white
 
   stack :margin => 10 do
-    @chat_messages = stack :margin => 10, :height => 400, :scroll => true do
+
+    @input_text = edit_box :width => 780, :height => 150 do |e|
+      text = e.text
+
+      pkg_controller =  PackageController.new(text)
+      @pkg_info.text = pkg_controller.info.join("\n")
+
+      encoded_data = pkg_controller.encoded_data
+      data_controller = DataController.new(encoded_data)
+      @decoded_text.text = data_controller.text
+    end
+
+    @pkg_info = edit_box :margin_top => 10, :height => 270, :width => 780, :scroll => true do
       border black, :stokewidth => 1
     end
 
-    flow :margin => 10 do
-      para "Name:", :margin_right => 10
-      @name = edit_line :width => 100, :margin_right => 3
-      para "Message:", :margin_right => 10
-      @message = edit_line :width => 290, :margin_right => 3
-      button "Send" do
-        if @name.text == ''
-          alert("Name can't be blank!")
-        end
-        if @message.text == ''
-          alert("Text can't be blank!")
-        end
-        add(@name.text, @message.text)
-      end
+    @decoded_text = edit_box :margin_top => 10, :height => 150, :width => 780, :scroll => true do
+      border black, :stokewidth => 1
     end
   end
-
-  @sp = SerialPort.new("/dev/tty8", 9600, 8, 1, SerialPort::NONE)
-  @messages = []
-
-  Thread.new do
-    EM.run do
-      EM.add_timer(1) do
-        add_message(@sp.sysread)
-      end
-    end
-    # while message = @sp.gets do
-      # unless @messages.include?(message.strip)
-        # add_message(message)
-      # end
-    # end
-  end
-
-  def add(name, text)
-    msg = format_msg(name,text)
-    @messages << msg
-    add_message(msg)
-    @sp.syswrite("#{msg}\r")
-  end
-
   def add_message(message)
-    @chat_messages.append { para message, :margin => 0}
+    @pkg_info.append { para message, :margin => 0}
   end
 
-  def format_msg(name, text)
-    "#{name}(#{time}): #{text}"
-  end
-
-  def time
-    Time.now.strftime("%H:%M:%S")
-  end
 end
