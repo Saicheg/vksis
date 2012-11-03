@@ -13,7 +13,16 @@ class String
 end
 
 class Array
+
+  def to_int_arr
+    self.each_slice(8).map{|arr| arr.join("").to_i(2)}
+  end
+
+  def to_bit_str
+    self.to_int_arr.map(&:to_bit_arr).map{|arr| arr.join("")}.join("")
+  end
+
   def to_string
-    self.each_slice(8).map{|arr| arr.join("").to_i(2)}.pack("c*")
+    self.to_int_arr.pack("c*")
   end
 end

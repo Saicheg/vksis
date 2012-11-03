@@ -3,12 +3,18 @@ require_relative 'extensions'
 require_relative 'package_controller'
 require_relative 'data_controller'
 
-# text = "Lorem ipsum dolor sit amet, consectetur adipiscing elit"
-text = "Lorem ipsum elit"
+text = "~Lorem ipsum ~~~dolor si~t am~et,~ ~~consectetur adipiscing elit"
+
+puts "Text:"
+puts text
 
 pkg_controller =  PackageController.new(text)
-pkg_controller.info
-packages = pkg_controller.packages
+puts "Packages: "
+pkg_controller.info.each {|info| puts info }
 
-data_controller = DataController.new(packages)
-text = data_controller.data
+encoded_data = pkg_controller.encoded_data
+data_controller = DataController.new(encoded_data)
+text_recivied = data_controller.text
+
+puts "Recivied text:"
+puts text_recivied
