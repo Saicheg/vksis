@@ -11,8 +11,12 @@ class DataController
   end
 
   def text
-    data_arr = @data.map{|d| Package.parse(d)[:data]}.flatten
-    data_arr.to_string.gsub("\x00", "")
+    text = packages.map{|pkg| pkg.data_bit}.flatten.to_string
+    text.gsub("\x00", "")
+  end
+
+  def packages
+    @packages ||= data_arr.map { |data| Package.new(data[:data], data[:flag], data[:dest], data[:source], data[:crc]) }
   end
 
   private
@@ -21,5 +25,9 @@ class DataController
     data.map do |pkg_data|
       pkg_data[0..7] + BitStuffer.unstuff(pkg_data[8..-1])
     end
+  end
+
+  def data_arr
+    @data.map{|d| Package.parse(d)}
   end
 end

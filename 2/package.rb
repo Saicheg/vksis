@@ -1,4 +1,6 @@
 require_relative 'bit_stuffer'
+require_relative 'exceptions'
+require 'digest/crc16'
 #----------#----------#---------#---------#---------#
 #   flag   #  dest    #  source #  data   #   crc   #
 #----------#----------#---------#---------#---------#
@@ -12,8 +14,14 @@ class Package
   PARAMS = %w(flag dest source)
 
   def self.parse(data)
-    {flag: data[0..7], dest: data[8..15], source: data[16..23], data: data[24..191], crc:[192..207]}
+    { flag:   data[0..7].to_int_arr.first,
+      dest:   data[8..15].to_int_arr.first,
+      source: data[16..23].to_int_arr.first,
+      data:   data[24..191],
+      crc:    data[192..207] }
   end
+
+  attr_reader :flag, :dest, :source, :data
 
   PARAMS.each do |p|
     define_method "#{p}_bit".to_sym do
@@ -33,23 +41,32 @@ class Package
     data_bit.join("")
   end
 
-  def initialize(data, flag=BitStuffer::FLAG, dest=DESTINATION, source=SOURCE)
+  def initialize(data, flag=BitStuffer::FLAG, dest=DESTINATION, source=SOURCE, crc=nil)
     @flag = flag
     @dest = dest
     @source = source
     @data = build_data(data)
+    raise InvalidPackageException if crc && crc != self.crc_bit
   end
 
   def info
-    "#{flag_bit_str} #{dest_bit_str} #{source_bit_str} #{data_bit_str} #{crc.join("")}"
+    "#{flag_bit_str} #{dest_bit_str} #{source_bit_str} #{data_bit_str} #{crc_bit.join("")}"
   end
 
   def pkg_data
-    [flag_bit, dest_bit, source_bit, data_bit, crc].flatten
+    [flag_bit, usefull_data, crc_bit].flatten
   end
 
   def crc
-    Array.new(16) {|i| 0}
+    Digest::CRC16.digest(usefull_data.join(""))
+  end
+
+  def crc_bit
+    crc.to_byte_arr
+  end
+
+  def usefull_data
+    [dest_bit, source_bit, data_bit].flatten
   end
 
   private
@@ -58,4 +75,5 @@ class Package
     data << 0 while data.size != 21*8
     data
   end
+
 end
