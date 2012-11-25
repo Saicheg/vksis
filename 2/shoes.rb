@@ -1,3 +1,4 @@
+require 'pry'
 require 'extensions'
 require 'exceptions'
 require 'package_controller'
@@ -41,7 +42,7 @@ Shoes.app :height => 600, :width => 800, :resizable => false, :title => 'Package
 
   def test_data
     input_data = @input_text.text.gsub(" ", "").split("").map(&:to_i)
-    input_data.each_slice(26*8).map{|slice| slice[0..7] + bitstuffer.stuff(slice[8..-1])}
+    input_data.each_slice(26*8).map{|slice| slice[0..7] + BitStuffer.stuff(slice[8..-1])}
   end
 
 end
