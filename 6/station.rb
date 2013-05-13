@@ -1,5 +1,5 @@
 class Station
-  attr_accessor :address, :priority, :buffer, :neighbor
+  attr_accessor :address, :priority, :buffer
 
   def initialize(address, priority)
    @address = address
@@ -14,15 +14,18 @@ class Station
   end
 
   def receive_token(frame)
-    if has_data?
-      @buffer.pop
+    if frame.priority <= @priority
+      return @buffer.pop if has_data?
     else
-      frame
+      if frame.reserved <= @priority && has_data?
+        frame.reserved = @priority
+      end
     end
+    frame
   end
 
   def receive_frame(frame)
-    if false && frame.priority < @priority
+    if frame.priority < @priority
       frame
     elsif answer?(frame)
       Frame.new
@@ -53,6 +56,7 @@ class Station
     frame.destination = dest
     frame.data = data
     frame.token = false
+    frame.priority = @priority
     @buffer.push(frame)
   end
 

@@ -3,6 +3,7 @@ GEM
   specs:
     cod (0.5.0)
     coderay (1.0.9)
+    digest-crc (0.4.0)
     method_source (0.8.1)
     pry (0.9.12.1)
       coderay (~> 1.0.5)
@@ -16,5 +17,6 @@ PLATFORMS
 
 DEPENDENCIES
   cod
+  digest-crc
   pry
   shoes

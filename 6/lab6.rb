@@ -1,27 +1,20 @@
 require 'pry'
 require_relative 'frame'
 require_relative 'station'
+require_relative 'monitoring_station'
 
-Thread.abort_on_exception=true
+Thread.abort_on_exception = true
 
-stations = Array.new(7) { |i| Station.new(i, i % 2) }
-
-stations.each_with_index do |station, i|
-  if i+1 == stations.count
-    station.neighbor = stations.first
-  else
-    station.neighbor = stations[i+1]
-  end
-end
-
+stations = Array.new(4) { |i| Station.new(i, rand(1..8)) }
+stations << MonitoringStation.new
 
 Thread.new do
   loop do
+    sleep 1
     source = stations.sample
     dest = stations.sample
-    # puts "\nData generated for #{source.address} with #{dest.address}"
+    next if source.is_a?(MonitoringStation) || dest.is_a?(MonitoringStation)
     source.new_message(dest.address, "1111")
-    sleep rand(1..5)
   end
 end
 
@@ -29,6 +22,6 @@ end
 
 stations.cycle do |station|
   @frame = station.receive(@frame)
-  sleep 1
+  sleep 0.1
 end
 
