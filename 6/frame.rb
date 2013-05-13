@@ -1,5 +1,3 @@
-require 'digest/crc32'
-
 class Frame
   attr_accessor :access, :destination, :source, :data, :status, :token, :priority, :reserved, :ttl
 
@@ -17,10 +15,6 @@ class Frame
     else
       "Destination: #{@destination}, source: #{@source}, data: #{@data}, status: #{status}, priority: #{@priority}, reserved: #{@reserved}"
     end
-  end
-
-  def fcs
-    @fcs ||= Digest::CRC32.hexdigest("#{@destination} #{@source} #{@data} #{@priority}")
   end
 
 end
