@@ -17,4 +17,8 @@ class Frame
     end
   end
 
+  def fcs
+    @fcs ||= Digest::CRC32.hexdigest("#{@destination}#{rand(20)}#{@source}#{@data}")
+  end
+
 end

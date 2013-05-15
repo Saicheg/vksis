@@ -1,5 +1,5 @@
 class Station
-  attr_accessor :address, :priority, :buffer
+  attr_accessor :address, :priority, :buffer, :received
 
   def initialize(address, priority)
    @address = address
@@ -9,7 +9,7 @@ class Station
   end
 
   def receive(frame)
-    puts "Station #{@address} recieved #{frame.info}"
+    puts "Station #{@address} recieved #{frame.info}" if $debug
     frame.token ? receive_token(frame) : receive_frame(frame)
   end
 

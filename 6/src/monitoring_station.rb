@@ -8,10 +8,10 @@ class MonitoringStation
   end
 
   def receive(frame)
-    puts "Monitoring station recieved #{frame.info}"
+    puts "Monitoring station recieved #{frame.info}" if $debug
     if frame.token
       if frame.reserved != 0
-        puts "Monitoring station changed priority from #{frame.priority} to #{frame.reserved}"
+        puts "Monitoring station changed priority from #{frame.priority} to #{frame.reserved}" if $debug
         frame.priority = frame.reserved
         frame.reserved = 0
         frame
@@ -20,7 +20,7 @@ class MonitoringStation
       if @last_fcs == frame.fcs
         frame.ttl -= 1
         if frame.ttl == 0
-          puts "Drop frame! " * 5
+          puts "Drop frame! " * 5 if $debug
           frame = Frame.new
         end
       else
