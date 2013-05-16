@@ -1,9 +1,28 @@
+//= require bootstrap.min
+
 @charset "utf-8"
 .input, .output
   width: 300px
 
-.trace
-  width: 1000px
+table
+  margin: 0
+  padding: 0
+  tr
+    td
+      padding: 0
+      margin: 0
+
+.main tr:nth-child(1)
+  td
+    height: 700px
+
+.trace-container
+  vertical-align: top
+  border: 1px solid grey
+  overflow-y: scroll
+  height: 700px
+  .trace
+    width: 1000px
 
 .clear
   height: 700px

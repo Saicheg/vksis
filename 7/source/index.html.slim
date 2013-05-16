@@ -1,20 +1,28 @@
-table
+table.main
   tr
     th
-      h1 INPUT
+      h1 Transmitter
     th
-      h1 OUTPUT
+      h1 Reciever
     th
-      h1 TRACE
+      h1 Log
   tr
     td
       textarea.input.clear
     td
       textarea.output.clear
     td
-      textarea.trace.clear
+      .trace-container
+        table.trace.table.table-striped.table-bordered
+          tr
+            th INFO
+            th DATA
+            th SN
+            th AN
+            th WINDOW
+            th SYN
+            th ACK
+            th FIN
   tr
-    td
-      button.btn.btn-large.send SEND
-    td
-    td
+    td colspan=3
+      button.btn.btn-large.send CLEAR

@@ -1,5 +1,5 @@
 $ ->
-  FIX = 18
+  FIX = 11
   printFix = (str) ->
     add = FIX - "#{str}".length
     for i in [0..add]
@@ -14,7 +14,17 @@ $ ->
     constructor: (@sn, @an, @window, @syn, @ack, @fin, @data) ->
 
     trace: (direction) ->
-      $trace.append "#{printFix "#{direction} #{@data || '-'}"}#{printFix @sn}#{printFix @an}#{printFix @window}#{printFix @syn}#{printFix @ack}#{printFix @fin}\n"
+      tr = $('<tr></tr>')
+      td = $('<td></td>')
+      tr.append(td.clone().text(direction))
+      tr.append(td.clone().text(@data || '-'))
+      tr.append(td.clone().text(@sn))
+      tr.append(td.clone().text(@an))
+      tr.append(td.clone().text(@window))
+      tr.append(td.clone().text(@syn))
+      tr.append(td.clone().text(@ack))
+      tr.append(td.clone().text(@fin))
+      $trace.append(tr)
 
 #################################### SYN
 
@@ -133,7 +143,7 @@ $ ->
 #################################### INITIALIZATION
 
   window.WINDOW = 3    # number of packets
-  window.ERR = 0.5     # error chance
+  window.ERR = 0.1     # error chance
 
   $in = $('.input')
   $out = $('.output')
@@ -144,8 +154,6 @@ $ ->
     window.SN1 = 32 # isn 1
     window.SN2 = 87 # isn 2
 
-    new Packet('SN', 'AN', 'WINDOW', 'SYN', 'ACK', 'FIN').trace('location')
-
     new Packet(SN1, 0, WINDOW, 1, 0, 0).sendSyn()
 
   window.sendWindow = ->
@@ -155,5 +163,11 @@ $ ->
     for pack in toTransmit[0...WINDOW]
       new Packet(pack[1], 0, WINDOW, 0, 0, 0, pack[0]).sendFromC1()
 
-  $btn.on 'click', ->
+  $in.on 'change', ->
     initConnection()
+
+  $btn.on 'click', ->
+    $in.text('')
+    $out.text('')
+    $trace.find('tr:not(:first-child)').remove()
+
