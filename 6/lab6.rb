@@ -9,7 +9,7 @@ stations = Array.new(4) { |i| Station.new(i, rand(1..8)) }
 all_stations = [] << stations << MonitoringStation.new
 all_stations.flatten!
 
-$frame = Frame.new
+$frame1 = Frame.new
 #
 # Thread.new do
 #   loop do
@@ -23,10 +23,19 @@ $frame = Frame.new
 # Frames
 Thread.new do
   all_stations.cycle do |station|
-    $frame = station.receive($frame)
+    $frame1 = station.receive($frame1)
     sleep 0.1
   end
 end
+
+# $frame2 = Frame.new
+# Frames
+# Thread.new do
+#   all_stations.cycle do |station|
+#     $frame2 = station.receive($frame2)
+#     sleep 0.1
+#   end
+# end
 
 Shoes.app title: "TokenRing", width: 800, height: 600 do
 
